@@ -1,0 +1,643 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="referrer" content="no-referrer">
+  <meta name="color-scheme" content="light dark">
+  <title>Romaji 1.0 — 일본어 입력기</title>
+  <meta name="description" content="일본어 키보드 설치 없이 로마자로 일본어 단어와 작품명을 검색하고 복사하는 웹 도구입니다.">
+  <style>
+:root{font-family:Inter,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;font-size:14px;color-scheme:light;--page:#fafbfe;--surface:#fff;--ink:#242936;--muted:#81899c;--faint:#a3a9b6;--border:#e8eaf0;--quiet:#f5f6fa;--accent:#408de9;--accent-soft:#edf5ff;--shadow:0 5px 25px rgba(38,55,98,.045);--status:#56b898;--focus:#559ae8}
+:root[data-theme="dark"]{color-scheme:dark;--page:#12151c;--surface:#1b202b;--ink:#e7eaf3;--muted:#a6aec1;--faint:#788195;--border:#333947;--quiet:#252b38;--accent:#79b7ff;--accent-soft:#20334b;--shadow:0 5px 25px rgba(0,0,0,.12);--status:#57c9a4;--focus:#87bfff}
+*{box-sizing:border-box}html{background:var(--page)}body{margin:0;background:var(--page);color:var(--ink);min-height:100vh}button,input,textarea{font:inherit;color:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--focus);outline-offset:2px}button:disabled{opacity:.4;cursor:default}.app-shell{max-width:1060px;margin:0 auto;padding:0 24px 55px}.topbar{height:88px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}.identity{display:flex;align-items:center;gap:12px}.identity .mark{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:var(--accent);color:white;font-family:"Yu Gothic",Meiryo,sans-serif;font-weight:800;font-size:23px}.identity strong{font-family:"Yu Gothic",Meiryo,sans-serif;font-size:19px;letter-spacing:-.6px;display:block;line-height:1.2}.identity small{display:block;letter-spacing:1.2px;font-size:9px;color:var(--muted);margin-top:4px;font-weight:700}.identity small span{color:var(--accent)}.top-actions{display:flex;align-items:center;gap:10px}.text-button,.icon-button{border:1px solid var(--border);background:var(--surface);border-radius:10px;height:37px;display:flex;align-items:center;gap:7px;justify-content:center;font-size:12px;font-weight:700;padding:0 12px}.icon-button{width:37px;font-size:22px;padding:8px}.icon-button svg{width:19px;height:19px}.pill-count{background:var(--quiet);color:var(--muted);border-radius:999px;padding:2px 6px;font-size:10px}.intro{padding:50px 0 26px}.eyebrow{color:var(--accent);font-size:10px;letter-spacing:1.65px;font-weight:800;margin:0 0 14px}.intro h1{font-size:clamp(26px,4vw,37px);font-weight:780;letter-spacing:-1.3px;margin:0 0 14px;line-height:1.36}.intro h1 span{color:var(--accent)}.intro>p:last-child{margin:0;font-size:13px;line-height:1.7;color:var(--muted)}.search{background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;transition:border-color .16s,box-shadow .16s}.search:focus-within{border-color:var(--focus);box-shadow:0 0 0 3px var(--accent-soft)}.search-field{display:flex;align-items:center;gap:15px;padding:11px 18px;min-height:65px}.search-field svg{color:var(--faint);flex-shrink:0}.search-field input{flex:1;min-width:0;border:0;outline:0!important;background:transparent;font-size:20px;font-weight:500;letter-spacing:.1px;padding:5px 0}.search-field input::placeholder{color:var(--faint);font-weight:400}.clear-btn{background:var(--quiet);border:0;width:26px;height:26px;border-radius:50%;font-size:19px;color:var(--muted);line-height:1}.search-info{border-top:1px solid var(--border);padding:10px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:11px;color:var(--muted)}.status{display:flex;align-items:center;gap:7px;min-width:0}.status-dot{display:inline-block;width:6px;height:6px;background:var(--status);border-radius:50%;flex-shrink:0}.status.searching .status-dot{background:var(--accent);animation:pulse 1.15s infinite}.status.warning .status-dot{background:#e6b35d}.keyhint{white-space:nowrap;color:var(--faint)}.layout{display:grid;grid-template-columns:minmax(0,1.28fr) minmax(295px,.88fr);gap:17px;align-items:start;margin:19px 0}.candidate-panel,.compose-panel{border:1px solid var(--border);border-radius:14px;background:var(--surface);box-shadow:var(--shadow);overflow:hidden}.section-heading{padding:17px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);gap:10px}.section-heading h2{font-size:14px;font-weight:750;letter-spacing:-.3px;margin:0}.section-heading span{font-size:11px;color:var(--muted)}#results{max-height:548px;overflow-y:auto;min-height:265px;overscroll-behavior:contain}.result-row{display:flex;align-items:stretch;gap:0;border-bottom:1px solid var(--border);background:var(--surface);animation:result-in .12s ease-out both;min-height:70px}.result-row:last-child{border-bottom:0}.result-row:hover,.result-row.active{background:var(--accent-soft)}.result-copy{width:100%;flex:1;min-width:0;display:flex;align-items:center;gap:12px;border:0;background:transparent;padding:11px 10px 11px 17px;text-align:left}.result-num{flex:0 0 23px;height:23px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:10px;font-weight:700}.result-row.active .result-num{background:var(--accent);border-color:var(--accent);color:white}.result-main{min-width:0;flex:1}.result-word{font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;font-size:21px;font-weight:650;line-height:1.35;overflow-wrap:anywhere;letter-spacing:.2px}.result-detail{margin-top:4px;font-size:10.5px;color:var(--muted);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.insert-btn{border:0;border-left:1px solid var(--border);background:transparent;width:48px;flex:0 0 48px;font-size:21px;color:var(--muted)}.insert-btn:hover{color:var(--accent)}.results-bottom{padding:14px 19px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);line-height:1.6}.empty-state{display:grid;place-items:center;min-height:265px;padding:32px 22px;text-align:center;color:var(--muted);line-height:1.8;font-size:12px;white-space:pre-line}.empty-symbol{width:45px;height:45px;background:var(--quiet);color:var(--faint);border-radius:14px;display:grid;place-items:center;font-family:serif;font-size:22px;margin-bottom:13px}.composer{padding:19px}.compose-label{font-size:11px;display:block;color:var(--muted);margin-bottom:11px}textarea{display:block;min-height:203px;resize:vertical;width:100%;line-height:1.7;padding:15px;border:1px solid var(--border);border-radius:10px;background:var(--quiet);font-size:19px;outline:none;letter-spacing:.2px;font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif}textarea:focus{border-color:var(--focus);background:var(--surface)}textarea::placeholder{color:var(--faint)}.composer-actions{display:flex;gap:7px;margin-top:11px;flex-wrap:wrap}.button-primary,.button-subtle{border:0;border-radius:9px;min-height:38px;padding:10px 12px;font-size:11px;font-weight:750}.button-primary{background:var(--accent);color:#fff}.button-primary span{font-size:15px;margin-left:3px}.button-subtle{background:var(--quiet);color:var(--muted)}.composer-actions .button-primary{flex:1;min-width:110px}.compose-helper{font-size:11px;line-height:1.8;color:var(--muted);margin:14px 0 0}footer{border-top:1px solid var(--border);padding:20px 2px 0;color:var(--faint);font-size:10.5px;line-height:1.8}dialog{color:var(--ink);background:var(--surface);border:1px solid var(--border);border-radius:16px;box-shadow:0 22px 100px rgba(11,23,44,.23);width:min(94vw,520px);max-height:min(85vh,760px);padding:0}dialog::backdrop{background:rgba(5,13,33,.42)}.dialog-inner{padding:24px;overflow-y:auto;max-height:min(85vh,760px)}.dialog-heading{display:flex;justify-content:space-between;align-items:center}.dialog-heading .eyebrow{font-size:9px;margin-bottom:7px}.dialog-heading h2{font-size:21px;margin:0}.dialog-description{font-size:12px;color:var(--muted);line-height:1.7;margin:14px 0 21px}#dictionaryForm{display:grid;gap:13px}#dictionaryForm label{display:grid;gap:7px;font-size:11px;font-weight:700}#dictionaryForm label span{color:var(--accent)}#dictionaryForm input{background:var(--quiet);border:1px solid var(--border);border-radius:8px;padding:11px;font-size:13px;min-width:0}#dictionaryForm label small{font-weight:400;font-size:10px;color:var(--muted)}.form-actions{display:flex;gap:8px}.form-actions button{flex:1}.dictionary-list-head{border-top:1px solid var(--border);display:flex;justify-content:space-between;margin:24px 0 10px;padding-top:17px}.dictionary-list-head h3{margin:0;font-size:12px}.dictionary-list-head span{color:var(--muted);font-size:11px}.dictionary-entry{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);padding:11px 0;gap:10px}.dictionary-entry strong{font-size:17px;font-family:"Yu Gothic",Meiryo,sans-serif}.dictionary-entry small{display:block;color:var(--muted);margin-top:4px;font-size:11px;word-break:break-all}.dictionary-entry .entry-controls{display:flex;gap:5px}.dictionary-entry button{background:var(--quiet);border:0;border-radius:6px;font-size:10px;padding:7px 9px}.dictionary-empty{color:var(--muted);font-size:11px;padding:14px 0}.toast{position:fixed;left:50%;bottom:23px;z-index:5;transform:translate(-50%,14px);opacity:0;pointer-events:none;background:var(--ink);color:var(--surface);padding:11px 16px;border-radius:9px;box-shadow:0 8px 30px rgba(0,0,0,.12);font-size:12px;font-weight:700;transition:opacity .14s,transform .14s;max-width:min(92vw,420px);text-align:center}.toast.visible{transform:translate(-50%,0);opacity:1}@keyframes pulse{50%{opacity:.35}}@keyframes result-in{from{opacity:.75;transform:translateY(3px)}to{opacity:1;transform:none}}@media(max-width:800px){.app-shell{padding:0 17px 40px}.topbar{height:72px}.intro{padding:36px 0 24px}.layout{grid-template-columns:1fr}.search-field input{font-size:18px}.keyhint{display:none}#results{max-height:460px;min-height:230px}.empty-state{min-height:230px}.compose-panel{margin-top:0}}@media(max-width:470px){.app-shell{padding:0 13px 32px}.identity .mark{width:34px;height:34px;border-radius:10px;font-size:19px}.identity strong{font-size:16px}.intro{padding:32px 3px 21px}.intro h1{font-size:26px}.intro h1 span{display:block}.intro>p:last-child{font-size:12px}.search-field{min-height:60px;padding:9px 13px;gap:12px}.search-info{padding:9px 13px}.section-heading{padding:15px}.result-copy{padding-left:12px;gap:10px}.result-word{font-size:20px}.insert-btn{width:44px;flex-basis:44px}.composer{padding:15px}textarea{min-height:142px}.results-bottom{padding:12px 14px}}@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+</style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="identity"><div class="mark">あ</div><div><strong>Romaji</strong><small>일본어 입력기 <span>1.0</span></small></div></div>
+      <div class="top-actions"><button id="dictionaryOpen" class="text-button" type="button" aria-label="사용자 사전 열기">내 사전 <span id="customCount" class="pill-count">0</span></button><button id="themeToggle" class="icon-button" type="button" aria-label="라이트/다크 테마 전환" title="테마 전환"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M20.5 14.1A8.7 8.7 0 0 1 9.9 3.5a8.7 8.7 0 1 0 10.6 10.6Z"/></svg></button></div>
+    </header>
+    <main>
+      <div class="intro"><p class="eyebrow">로마자로 일본어 검색</p><h1>영어로 쓰고, <span>일본어로 찾으세요.</span></h1><p>발음만 기억나도 괜찮습니다. 한자부터 애니메이션·만화 제목까지 검색하세요.</p></div>
+      <section class="search" aria-label="로마자 검색">
+        <div class="search-field">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.7" cy="10.7" r="7.2"/><path d="m16.3 16.3 5.1 5.1"/></svg>
+          <input id="query" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" aria-label="영문 또는 로마자 검색" aria-controls="results" placeholder="sakura, nihongo, mazing…" autofocus>
+          <button id="clearQuery" class="clear-btn" type="button" title="검색어 지우기" aria-label="검색어 지우기">×</button>
+        </div>
+        <div class="search-info"><span id="onlineStatus" class="status" role="status" aria-live="polite"><span class="status-dot"></span>로컬 변환 준비</span><span class="keyhint">↑ ↓ 이동&nbsp; · &nbsp;Enter 복사&nbsp; · &nbsp;Shift+Enter 삽입</span></div>
+      </section>
+      <div class="layout">
+        <section class="candidate-panel" aria-label="일본어 후보">
+          <div class="section-heading"><h2>변환 후보</h2><span id="resultCount">검색어를 입력하세요</span></div>
+          <div id="results" role="listbox" aria-label="후보 목록" aria-activedescendant=""></div>
+          <div class="results-bottom" id="resultsBottom">후보를 누르면 바로 복사됩니다. <strong>＋</strong> 버튼은 문장에 삽입합니다.</div>
+        </section>
+        <section class="compose-panel" aria-label="일본어 문장 작성">
+          <div class="section-heading"><h2>문장 작성</h2><span>직접 수정 가능</span></div>
+          <div class="composer">
+            <label for="output" class="compose-label">후보를 ＋로 넣거나, 여기서 직접 작성하세요.</label>
+            <textarea id="output" lang="ja" spellcheck="false" placeholder="選んだ言葉をここに…" aria-label="작성한 일본어"></textarea>
+            <div class="composer-actions"><button id="copyAll" class="button-primary" type="button">전체 복사 <span aria-hidden="true">↗</span></button><button id="undo" class="button-subtle" type="button" title="실행 취소">↶ 되돌리기</button><button id="reset" class="button-subtle" type="button">지우기</button></div>
+            <p class="compose-helper">문장을 클릭해 커서를 옮긴 다음 후보의 ＋를 누르면 해당 위치에 삽입됩니다.</p>
+          </div>
+        </section>
+      </div>
+      <footer>한자 변환은 일반 단어는 SKK 사전을 내려받아 기기에서 변환합니다. 짧은 검색어는 작품명 검색을 위해 AniList에 전송되며, 검색 기록은 저장하지 않습니다.</footer>
+    </main>
+  </div>
+  <dialog id="dictionaryDialog" aria-labelledby="dictionaryTitle">
+    <div class="dialog-inner"><div class="dialog-heading"><div><p class="eyebrow">사용자 사전</p><h2 id="dictionaryTitle">내 단어 사전</h2></div><button id="dictionaryClose" type="button" class="icon-button" aria-label="닫기">×</button></div>
+      <p class="dialog-description">일본어 표기와 영문 별칭을 등록하세요. 이 사전만 현재 브라우저에 저장됩니다.</p>
+      <form id="dictionaryForm"><input type="hidden" id="editId"><label>일본어 표기 <span>*</span><input id="entryWord" maxlength="80" required placeholder="例: マジンガーZ"></label><label>읽는 법 (선택)<input id="entryReading" maxlength="80" placeholder="例: マジンガーゼット"></label><label>영문 별칭 <span>*</span><input id="entryAliases" required placeholder="例: mazing, mazinger z"><small>여러 별칭은 쉼표로 구분하세요.</small></label><div class="form-actions"><button type="submit" class="button-primary" id="saveEntry">단어 저장</button><button type="button" class="button-subtle" id="cancelEdit">입력 초기화</button></div></form>
+      <div class="dictionary-list-head"><h3>등록한 단어</h3><span id="dictionaryListCount"></span></div><div id="dictionaryList" class="dictionary-list" aria-live="polite"></div>
+    </div>
+  </dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script type="module">
+const DICT = [{"r":"nihongo","k":"にほんご","w":"日本語","g":"word","a":["japanese"]},{"r":"nihon","k":"にほん","w":"日本","g":"place","a":["japan","nippon"]},{"r":"nihonjin","k":"にほんじん","w":"日本人","g":"word","a":["japanese person"]},{"r":"kanji","k":"かんじ","w":"漢字","g":"word","a":[]},{"r":"hiragana","k":"ひらがな","w":"ひらがな","g":"word","a":[]},{"r":"katakana","k":"かたかな","w":"カタカナ","g":"word","a":[]},{"r":"romaji","k":"ろーまじ","w":"ローマ字","g":"word","a":[]},{"r":"sakura","k":"さくら","w":"桜","g":"word","a":["cherry blossom"]},{"r":"sakura","k":"さくら","w":"さくら","g":"word","a":[]},{"r":"sakura","k":"さくら","w":"サクラ","g":"word","a":[]},{"r":"watashi","k":"わたし","w":"私","g":"word","a":[]},{"r":"watakushi","k":"わたくし","w":"私","g":"word","a":[]},{"r":"boku","k":"ぼく","w":"僕","g":"word","a":[]},{"r":"ore","k":"おれ","w":"俺","g":"word","a":[]},{"r":"anata","k":"あなた","w":"貴方","g":"word","a":[]},{"r":"anata","k":"あなた","w":"あなた","g":"word","a":[]},{"r":"kimi","k":"きみ","w":"君","g":"word","a":[]},{"r":"watashitachi","k":"わたしたち","w":"私たち","g":"word","a":[]},{"r":"minna","k":"みんな","w":"皆","g":"word","a":[]},{"r":"minna","k":"みんな","w":"みんな","g":"word","a":[]},{"r":"kare","k":"かれ","w":"彼","g":"word","a":[]},{"r":"kanojo","k":"かのじょ","w":"彼女","g":"word","a":[]},{"r":"hito","k":"ひと","w":"人","g":"word","a":[]},{"r":"otoko","k":"おとこ","w":"男","g":"word","a":[]},{"r":"onna","k":"おんな","w":"女","g":"word","a":[]},{"r":"otokonoko","k":"おとこのこ","w":"男の子","g":"word","a":[]},{"r":"onnanoko","k":"おんなのこ","w":"女の子","g":"word","a":[]},{"r":"otona","k":"おとな","w":"大人","g":"word","a":[]},{"r":"kodomo","k":"こども","w":"子供","g":"word","a":[]},{"r":"tomodachi","k":"ともだち","w":"友達","g":"word","a":[]},{"r":"nakama","k":"なかま","w":"仲間","g":"word","a":[]},{"r":"kazoku","k":"かぞく","w":"家族","g":"word","a":[]},{"r":"otousan","k":"おとうさん","w":"お父さん","g":"word","a":["otousan"]},{"r":"okaasan","k":"おかあさん","w":"お母さん","g":"word","a":[]},{"r":"oniisan","k":"おにいさん","w":"お兄さん","g":"word","a":[]},{"r":"oneesan","k":"おねえさん","w":"お姉さん","g":"word","a":[]},{"r":"otouto","k":"おとうと","w":"弟","g":"word","a":[]},{"r":"imouto","k":"いもうと","w":"妹","g":"word","a":[]},{"r":"sensei","k":"せんせい","w":"先生","g":"word","a":["teacher"]},{"r":"seito","k":"せいと","w":"生徒","g":"word","a":[]},{"r":"gakusei","k":"がくせい","w":"学生","g":"word","a":["student"]},{"r":"shougakusei","k":"しょうがくせい","w":"小学生","g":"word","a":[]},{"r":"daigakusei","k":"だいがくせい","w":"大学生","g":"word","a":[]},{"r":"daigaku","k":"だいがく","w":"大学","g":"word","a":[]},{"r":"gakkou","k":"がっこう","w":"学校","g":"word","a":["school"]},{"r":"kyoushitsu","k":"きょうしつ","w":"教室","g":"word","a":[]},{"r":"benkyou","k":"べんきょう","w":"勉強","g":"word","a":["study"]},{"r":"shigoto","k":"しごと","w":"仕事","g":"word","a":["work"]},{"r":"kaisha","k":"かいしゃ","w":"会社","g":"word","a":[]},{"r":"shain","k":"しゃいん","w":"社員","g":"word","a":[]},{"r":"shachou","k":"しゃちょう","w":"社長","g":"word","a":[]},{"r":"shakaijin","k":"しゃかいじん","w":"社会人","g":"word","a":[]},{"r":"kotoba","k":"ことば","w":"言葉","g":"word","a":[]},{"r":"namae","k":"なまえ","w":"名前","g":"word","a":["name"]},{"r":"kanashii","k":"かなしい","w":"悲しい","g":"word","a":[]},{"r":"ureshii","k":"うれしい","w":"嬉しい","g":"word","a":[]},{"r":"tanoshii","k":"たのしい","w":"楽しい","g":"word","a":[]},{"r":"omoshiroi","k":"おもしろい","w":"面白い","g":"word","a":[]},{"r":"kawaii","k":"かわいい","w":"可愛い","g":"word","a":["cute"]},{"r":"kakkoii","k":"かっこいい","w":"格好いい","g":"word","a":["cool"]},{"r":"utsukushii","k":"うつくしい","w":"美しい","g":"word","a":[]},{"r":"yasashii","k":"やさしい","w":"優しい","g":"word","a":[]},{"r":"muzukashii","k":"むずかしい","w":"難しい","g":"word","a":[]},{"r":"yasui","k":"やすい","w":"安い","g":"word","a":[]},{"r":"takai","k":"たかい","w":"高い","g":"word","a":[]},{"r":"hikui","k":"ひくい","w":"低い","g":"word","a":[]},{"r":"hayai","k":"はやい","w":"早い","g":"word","a":[]},{"r":"osoi","k":"おそい","w":"遅い","g":"word","a":[]},{"r":"atarashii","k":"あたらしい","w":"新しい","g":"word","a":[]},{"r":"furui","k":"ふるい","w":"古い","g":"word","a":[]},{"r":"ookii","k":"おおきい","w":"大きい","g":"word","a":["ooki"]},{"r":"chiisai","k":"ちいさい","w":"小さい","g":"word","a":[]},{"r":"nagai","k":"ながい","w":"長い","g":"word","a":[]},{"r":"mijikai","k":"みじかい","w":"短い","g":"word","a":[]},{"r":"yoi","k":"よい","w":"良い","g":"word","a":[]},{"r":"ii","k":"いい","w":"良い","g":"word","a":[]},{"r":"warui","k":"わるい","w":"悪い","g":"word","a":[]},{"r":"sugoi","k":"すごい","w":"凄い","g":"word","a":[]},{"r":"sugoi","k":"すごい","w":"すごい","g":"word","a":[]},{"r":"subarashii","k":"すばらしい","w":"素晴らしい","g":"word","a":[]},{"r":"daijoubu","k":"だいじょうぶ","w":"大丈夫","g":"word","a":["daijobu"]},{"r":"heiki","k":"へいき","w":"平気","g":"word","a":[]},{"r":"daiji","k":"だいじ","w":"大事","g":"word","a":[]},{"r":"taisetsu","k":"たいせつ","w":"大切","g":"word","a":[]},{"r":"suki","k":"すき","w":"好き","g":"word","a":["like"]},{"r":"kirai","k":"きらい","w":"嫌い","g":"word","a":[]},{"r":"daisuki","k":"だいすき","w":"大好き","g":"word","a":["love"]},{"r":"ai","k":"あい","w":"愛","g":"word","a":["love"]},{"r":"koi","k":"こい","w":"恋","g":"word","a":[]},{"r":"aishiteru","k":"あいしてる","w":"愛してる","g":"word","a":[]},{"r":"arigatou","k":"ありがとう","w":"ありがとう","g":"phrase","a":["arigato"]},{"r":"arigatougozaimasu","k":"ありがとうございます","w":"ありがとうございます","g":"phrase","a":["thank you"]},{"r":"konnichiwa","k":"こんにちは","w":"こんにちは","g":"phrase","a":["hello","konnichiha"]},{"r":"konbanwa","k":"こんばんは","w":"こんばんは","g":"phrase","a":["good evening","konbanha"]},{"r":"ohayou","k":"おはよう","w":"おはよう","g":"phrase","a":["ohayo"]},{"r":"ohayougozaimasu","k":"おはようございます","w":"おはようございます","g":"phrase","a":[]},{"r":"oyasumi","k":"おやすみ","w":"おやすみ","g":"phrase","a":[]},{"r":"oyasuminasai","k":"おやすみなさい","w":"おやすみなさい","g":"phrase","a":[]},{"r":"sayonara","k":"さようなら","w":"さようなら","g":"phrase","a":["sayounara"]},{"r":"sumimasen","k":"すみません","w":"すみません","g":"phrase","a":["sorry"]},{"r":"ごめん","k":"ごめん","w":"ごめん","g":"phrase","a":["gomen"]},{"r":"gomen","k":"ごめん","w":"ごめん","g":"phrase","a":[]},{"r":"gomennasai","k":"ごめんなさい","w":"ごめんなさい","g":"phrase","a":[]},{"r":"onegaishimasu","k":"おねがいします","w":"お願いします","g":"phrase","a":[]},{"r":"yoroshiku","k":"よろしく","w":"よろしく","g":"phrase","a":[]},{"r":"yoroshikuonegaishimasu","k":"よろしくおねがいします","w":"よろしくお願いします","g":"phrase","a":[]},{"r":"hajimemashite","k":"はじめまして","w":"はじめまして","g":"phrase","a":[]},{"r":"itadakimasu","k":"いただきます","w":"いただきます","g":"phrase","a":[]},{"r":"gochisousama","k":"ごちそうさま","w":"ごちそうさま","g":"phrase","a":[]},{"r":"hai","k":"はい","w":"はい","g":"phrase","a":["yes"]},{"r":"iie","k":"いいえ","w":"いいえ","g":"phrase","a":["no"]},{"r":"un","k":"うん","w":"うん","g":"phrase","a":[]},{"r":"uun","k":"ううん","w":"ううん","g":"phrase","a":[]},{"r":"moshimoshi","k":"もしもし","w":"もしもし","g":"phrase","a":["hello phone"]},{"r":"otsukaresama","k":"おつかれさま","w":"お疲れ様","g":"phrase","a":[]},{"r":"otsukaresamadesu","k":"おつかれさまです","w":"お疲れ様です","g":"phrase","a":[]},{"r":"ogenki","k":"おげんき","w":"お元気","g":"phrase","a":[]},{"r":"genki","k":"げんき","w":"元気","g":"word","a":[]},{"r":"yatta","k":"やった","w":"やった","g":"phrase","a":[]},{"r":"sou","k":"そう","w":"そう","g":"phrase","a":[]},{"r":"soudesu","k":"そうです","w":"そうです","g":"phrase","a":[]},{"r":"desu","k":"です","w":"です","g":"phrase","a":[]},{"r":"masu","k":"ます","w":"ます","g":"phrase","a":[]},{"r":"deshita","k":"でした","w":"でした","g":"phrase","a":[]},{"r":"janai","k":"じゃない","w":"じゃない","g":"phrase","a":[]},{"r":"arimasu","k":"あります","w":"あります","g":"phrase","a":[]},{"r":"imasu","k":"います","w":"います","g":"phrase","a":[]},{"r":"wa","k":"は","w":"は","g":"particle","a":[]},{"r":"ga","k":"が","w":"が","g":"particle","a":[]},{"r":"wo","k":"を","w":"を","g":"particle","a":["o"]},{"r":"ni","k":"に","w":"に","g":"particle","a":[]},{"r":"de","k":"で","w":"で","g":"particle","a":[]},{"r":"no","k":"の","w":"の","g":"particle","a":[]},{"r":"to","k":"と","w":"と","g":"particle","a":[]},{"r":"mo","k":"も","w":"も","g":"particle","a":[]},{"r":"he","k":"へ","w":"へ","g":"particle","a":[]},{"r":"kara","k":"から","w":"から","g":"particle","a":[]},{"r":"made","k":"まで","w":"まで","g":"particle","a":[]},{"r":"ya","k":"や","w":"や","g":"particle","a":[]},{"r":"ne","k":"ね","w":"ね","g":"particle","a":[]},{"r":"yo","k":"よ","w":"よ","g":"particle","a":[]},{"r":"ka","k":"か","w":"か","g":"particle","a":[]},{"r":"kore","k":"これ","w":"これ","g":"word","a":[]},{"r":"sore","k":"それ","w":"それ","g":"word","a":[]},{"r":"are","k":"あれ","w":"あれ","g":"word","a":[]},{"r":"dore","k":"どれ","w":"どれ","g":"word","a":[]},{"r":"koko","k":"ここ","w":"ここ","g":"word","a":[]},{"r":"soko","k":"そこ","w":"そこ","g":"word","a":[]},{"r":"asoko","k":"あそこ","w":"あそこ","g":"word","a":[]},{"r":"doko","k":"どこ","w":"どこ","g":"word","a":[]},{"r":"nani","k":"なに","w":"何","g":"word","a":["nan"]},{"r":"nanda","k":"なんだ","w":"何だ","g":"word","a":[]},{"r":"naze","k":"なぜ","w":"何故","g":"word","a":[]},{"r":"doushite","k":"どうして","w":"どうして","g":"word","a":[]},{"r":"itsu","k":"いつ","w":"いつ","g":"word","a":[]},{"r":"dare","k":"だれ","w":"誰","g":"word","a":[]},{"r":"dono","k":"どの","w":"どの","g":"word","a":[]},{"r":"donna","k":"どんな","w":"どんな","g":"word","a":[]},{"r":"dou","k":"どう","w":"どう","g":"word","a":[]},{"r":"ikura","k":"いくら","w":"いくら","g":"word","a":[]},{"r":"ikutsu","k":"いくつ","w":"いくつ","g":"word","a":[]},{"r":"kyou","k":"きょう","w":"今日","g":"word","a":["today"]},{"r":"kinou","k":"きのう","w":"昨日","g":"word","a":["yesterday"]},{"r":"ashita","k":"あした","w":"明日","g":"word","a":["tomorrow"]},{"r":"asatte","k":"あさって","w":"明後日","g":"word","a":[]},{"r":"ima","k":"いま","w":"今","g":"word","a":["now"]},{"r":"ato","k":"あと","w":"後","g":"word","a":[]},{"r":"mae","k":"まえ","w":"前","g":"word","a":[]},{"r":"saigo","k":"さいご","w":"最後","g":"word","a":[]},{"r":"hajime","k":"はじめ","w":"始め","g":"word","a":[]},{"r":"saisho","k":"さいしょ","w":"最初","g":"word","a":[]},{"r":"asa","k":"あさ","w":"朝","g":"word","a":[]},{"r":"hiru","k":"ひる","w":"昼","g":"word","a":[]},{"r":"yoru","k":"よる","w":"夜","g":"word","a":[]},{"r":"yuugata","k":"ゆうがた","w":"夕方","g":"word","a":[]},{"r":"yonaka","k":"よなか","w":"夜中","g":"word","a":[]},{"r":"jikan","k":"じかん","w":"時間","g":"word","a":["time"]},{"r":"fun","k":"ふん","w":"分","g":"word","a":[]},{"r":"byou","k":"びょう","w":"秒","g":"word","a":[]},{"r":"ichinichi","k":"いちにち","w":"一日","g":"word","a":[]},{"r":"mainichi","k":"まいにち","w":"毎日","g":"word","a":[]},{"r":"maishuu","k":"まいしゅう","w":"毎週","g":"word","a":[]},{"r":"maitsuki","k":"まいつき","w":"毎月","g":"word","a":[]},{"r":"maitoshi","k":"まいとし","w":"毎年","g":"word","a":[]},{"r":"getsuyoubi","k":"げつようび","w":"月曜日","g":"word","a":[]},{"r":"kayoubi","k":"かようび","w":"火曜日","g":"word","a":[]},{"r":"suiyoubi","k":"すいようび","w":"水曜日","g":"word","a":[]},{"r":"mokuyoubi","k":"もくようび","w":"木曜日","g":"word","a":[]},{"r":"kinyoubi","k":"きんようび","w":"金曜日","g":"word","a":[]},{"r":"doyoubi","k":"どようび","w":"土曜日","g":"word","a":[]},{"r":"nichiyoubi","k":"にちようび","w":"日曜日","g":"word","a":[]},{"r":"haru","k":"はる","w":"春","g":"word","a":[]},{"r":"natsu","k":"なつ","w":"夏","g":"word","a":[]},{"r":"aki","k":"あき","w":"秋","g":"word","a":[]},{"r":"fuyu","k":"ふゆ","w":"冬","g":"word","a":[]},{"r":"atsui","k":"あつい","w":"暑い","g":"word","a":[]},{"r":"samui","k":"さむい","w":"寒い","g":"word","a":[]},{"r":"atsui","k":"あつい","w":"熱い","g":"word","a":[]},{"r":"sora","k":"そら","w":"空","g":"word","a":[]},{"r":"umi","k":"うみ","w":"海","g":"word","a":[]},{"r":"yama","k":"やま","w":"山","g":"word","a":[]},{"r":"kawa","k":"かわ","w":"川","g":"word","a":[]},{"r":"mori","k":"もり","w":"森","g":"word","a":[]},{"r":"hana","k":"はな","w":"花","g":"word","a":[]},{"r":"hana","k":"はな","w":"鼻","g":"word","a":[]},{"r":"ki","k":"き","w":"木","g":"word","a":[]},{"r":"mizu","k":"みず","w":"水","g":"word","a":[]},{"r":"hi","k":"ひ","w":"火","g":"word","a":[]},{"r":"tsuchi","k":"つち","w":"土","g":"word","a":[]},{"r":"kaze","k":"かぜ","w":"風","g":"word","a":[]},{"r":"ame","k":"あめ","w":"雨","g":"word","a":[]},{"r":"yuki","k":"ゆき","w":"雪","g":"word","a":[]},{"r":"kumo","k":"くも","w":"雲","g":"word","a":[]},{"r":"tsuki","k":"つき","w":"月","g":"word","a":[]},{"r":"taiyou","k":"たいよう","w":"太陽","g":"word","a":[]},{"r":"hoshi","k":"ほし","w":"星","g":"word","a":[]},{"r":"sekai","k":"せかい","w":"世界","g":"word","a":["world"]},{"r":"chikyuu","k":"ちきゅう","w":"地球","g":"word","a":["earth"]},{"r":"uchuu","k":"うちゅう","w":"宇宙","g":"word","a":["universe"]},{"r":"mirai","k":"みらい","w":"未来","g":"word","a":["future"]},{"r":"kako","k":"かこ","w":"過去","g":"word","a":[]},{"r":"ima","k":"いま","w":"今","g":"word","a":[]},{"r":"yume","k":"ゆめ","w":"夢","g":"word","a":["dream"]},{"r":"kibou","k":"きぼう","w":"希望","g":"word","a":[]},{"r":"kokoro","k":"こころ","w":"心","g":"word","a":["heart"]},{"r":"inochi","k":"いのち","w":"命","g":"word","a":[]},{"r":"kami","k":"かみ","w":"神","g":"word","a":["god"]},{"r":"kami","k":"かみ","w":"紙","g":"word","a":[]},{"r":"kami","k":"かみ","w":"髪","g":"word","a":[]},{"r":"akuma","k":"あくま","w":"悪魔","g":"word","a":["demon"]},{"r":"tenshi","k":"てんし","w":"天使","g":"word","a":["angel"]},{"r":"mahou","k":"まほう","w":"魔法","g":"word","a":["magic"]},{"r":"yuusha","k":"ゆうしゃ","w":"勇者","g":"word","a":["hero"]},{"r":"maou","k":"まおう","w":"魔王","g":"word","a":["demon king"]},{"r":"ou","k":"おう","w":"王","g":"word","a":["king"]},{"r":"oujo","k":"おうじょ","w":"王女","g":"word","a":[]},{"r":"ouji","k":"おうじ","w":"王子","g":"word","a":[]},{"r":"hime","k":"ひめ","w":"姫","g":"word","a":["princess"]},{"r":"samurai","k":"さむらい","w":"侍","g":"word","a":[]},{"r":"ninja","k":"にんじゃ","w":"忍者","g":"word","a":[]},{"r":"katana","k":"かたな","w":"刀","g":"word","a":[]},{"r":"ken","k":"けん","w":"剣","g":"word","a":[]},{"r":"tatakai","k":"たたかい","w":"戦い","g":"word","a":[]},{"r":"sensou","k":"せんそう","w":"戦争","g":"word","a":[]},{"r":"heiwa","k":"へいわ","w":"平和","g":"word","a":[]},{"r":"chikara","k":"ちから","w":"力","g":"word","a":[]},{"r":"kagaku","k":"かがく","w":"科学","g":"word","a":[]},{"r":"rekishi","k":"れきし","w":"歴史","g":"word","a":[]},{"r":"bunka","k":"ぶんか","w":"文化","g":"word","a":[]},{"r":"seiji","k":"せいじ","w":"政治","g":"word","a":[]},{"r":"keizai","k":"けいざい","w":"経済","g":"word","a":[]},{"r":"ryokou","k":"りょこう","w":"旅行","g":"word","a":["travel"]},{"r":"koukuu","k":"こうくう","w":"航空","g":"word","a":[]},{"r":"densha","k":"でんしゃ","w":"電車","g":"word","a":["train"]},{"r":"shinkansen","k":"しんかんせん","w":"新幹線","g":"word","a":["bullet train"]},{"r":"eki","k":"えき","w":"駅","g":"word","a":["station"]},{"r":"kuruma","k":"くるま","w":"車","g":"word","a":["car"]},{"r":"jitensha","k":"じてんしゃ","w":"自転車","g":"word","a":[]},{"r":"hikouki","k":"ひこうき","w":"飛行機","g":"word","a":[]},{"r":"fune","k":"ふね","w":"船","g":"word","a":[]},{"r":"michi","k":"みち","w":"道","g":"word","a":[]},{"r":"kaidan","k":"かいだん","w":"階段","g":"word","a":[]},{"r":"heya","k":"へや","w":"部屋","g":"word","a":["room"]},{"r":"ie","k":"いえ","w":"家","g":"word","a":["home"]},{"r":"uchi","k":"うち","w":"家","g":"word","a":[]},{"r":"uchi","k":"うち","w":"うち","g":"word","a":[]},{"r":"mado","k":"まど","w":"窓","g":"word","a":[]},{"r":"tobira","k":"とびら","w":"扉","g":"word","a":[]},{"r":"doa","k":"どあ","w":"ドア","g":"word","a":["door"]},{"r":"isu","k":"いす","w":"椅子","g":"word","a":["chair"]},{"r":"tsukue","k":"つくえ","w":"机","g":"word","a":["desk"]},{"r":"hon","k":"ほん","w":"本","g":"word","a":["book"]},{"r":"manga","k":"まんが","w":"漫画","g":"word","a":["comic"]},{"r":"anime","k":"あにめ","w":"アニメ","g":"word","a":["animation"]},{"r":"geemu","k":"げーむ","w":"ゲーム","g":"word","a":["game"]},{"r":"eiga","k":"えいが","w":"映画","g":"word","a":["movie"]},{"r":"ongaku","k":"おんがく","w":"音楽","g":"word","a":["music"]},{"r":"uta","k":"うた","w":"歌","g":"word","a":["song"]},{"r":"kashi","k":"かし","w":"歌詞","g":"word","a":["lyrics"]},{"r":"utaite","k":"うたいて","w":"歌い手","g":"word","a":[]},{"r":"shousetsu","k":"しょうせつ","w":"小説","g":"word","a":["novel"]},{"r":"monogatari","k":"ものがたり","w":"物語","g":"word","a":["story"]},{"r":"sekai","k":"せかい","w":"世界","g":"word","a":[]},{"r":"shashin","k":"しゃしん","w":"写真","g":"word","a":["photo"]},{"r":"e","k":"え","w":"絵","g":"word","a":["picture"]},{"r":"irasuto","k":"いらすと","w":"イラスト","g":"word","a":["illustration"]},{"r":"eishi","k":"えし","w":"絵師","g":"word","a":[]},{"r":"irasutoreetaa","k":"いらすとれーたー","w":"イラストレーター","g":"word","a":[]},{"r":"shousetsuka","k":"しょうせつか","w":"小説家","g":"word","a":[]},{"r":"sakka","k":"さっか","w":"作家","g":"word","a":[]},{"r":"seiyuu","k":"せいゆう","w":"声優","g":"word","a":["voice actor"]},{"r":"kawaii","k":"かわいい","w":"かわいい","g":"word","a":[]},{"r":"nekko","k":"ねっこ","w":"根っこ","g":"word","a":[]},{"r":"neko","k":"ねこ","w":"猫","g":"word","a":["cat"]},{"r":"inu","k":"いぬ","w":"犬","g":"word","a":["dog"]},{"r":"tori","k":"とり","w":"鳥","g":"word","a":["bird"]},{"r":"sakana","k":"さかな","w":"魚","g":"word","a":["fish"]},{"r":"usagi","k":"うさぎ","w":"兎","g":"word","a":["rabbit"]},{"r":"usagi","k":"うさぎ","w":"うさぎ","g":"word","a":[]},{"r":"kuma","k":"くま","w":"熊","g":"word","a":["bear"]},{"r":"kitsune","k":"きつね","w":"狐","g":"word","a":["fox"]},{"r":"tanuki","k":"たぬき","w":"狸","g":"word","a":[]},{"r":"ryuu","k":"りゅう","w":"龍","g":"word","a":["dragon"]},{"r":"ryuu","k":"りゅう","w":"竜","g":"word","a":[]},{"r":"ookami","k":"おおかみ","w":"狼","g":"word","a":["wolf"]},{"r":"uma","k":"うま","w":"馬","g":"word","a":["horse"]},{"r":"ushi","k":"うし","w":"牛","g":"word","a":["cow"]},{"r":"buta","k":"ぶた","w":"豚","g":"word","a":["pig"]},{"r":"hebi","k":"へび","w":"蛇","g":"word","a":["snake"]},{"r":"chou","k":"ちょう","w":"蝶","g":"word","a":["butterfly"]},{"r":"mushi","k":"むし","w":"虫","g":"word","a":["insect"]},{"r":"ringo","k":"りんご","w":"林檎","g":"word","a":["apple"]},{"r":"ringo","k":"りんご","w":"りんご","g":"word","a":[]},{"r":"mikan","k":"みかん","w":"蜜柑","g":"word","a":[]},{"r":"mikan","k":"みかん","w":"みかん","g":"word","a":[]},{"r":"ichigo","k":"いちご","w":"苺","g":"word","a":["strawberry"]},{"r":"ichigo","k":"いちご","w":"いちご","g":"word","a":[]},{"r":"banana","k":"ばなな","w":"バナナ","g":"word","a":[]},{"r":"suika","k":"すいか","w":"西瓜","g":"word","a":[]},{"r":"suika","k":"すいか","w":"スイカ","g":"word","a":[]},{"r":"momo","k":"もも","w":"桃","g":"word","a":["peach"]},{"r":"budou","k":"ぶどう","w":"葡萄","g":"word","a":["grape"]},{"r":"kome","k":"こめ","w":"米","g":"word","a":["rice"]},{"r":"gohan","k":"ごはん","w":"ご飯","g":"word","a":["meal"]},{"r":"onigiri","k":"おにぎり","w":"おにぎり","g":"word","a":[]},{"r":"sushi","k":"すし","w":"寿司","g":"word","a":[]},{"r":"sushi","k":"すし","w":"すし","g":"word","a":[]},{"r":"ramen","k":"らーめん","w":"ラーメン","g":"word","a":["raamen","ramen"]},{"r":"udon","k":"うどん","w":"うどん","g":"word","a":[]},{"r":"soba","k":"そば","w":"蕎麦","g":"word","a":[]},{"r":"bentou","k":"べんとう","w":"弁当","g":"word","a":["bento"]},{"r":"niku","k":"にく","w":"肉","g":"word","a":["meat"]},{"r":"yasai","k":"やさい","w":"野菜","g":"word","a":["vegetable"]},{"r":"pan","k":"ぱん","w":"パン","g":"word","a":["bread"]},{"r":"koohii","k":"こーひー","w":"コーヒー","g":"word","a":["coffee"]},{"r":"koucha","k":"こうちゃ","w":"紅茶","g":"word","a":["tea"]},{"r":"ocha","k":"おちゃ","w":"お茶","g":"word","a":["tea"]},{"r":"nomimono","k":"のみもの","w":"飲み物","g":"word","a":[]},{"r":"tabemono","k":"たべもの","w":"食べ物","g":"word","a":[]},{"r":"resutoran","k":"れすとらん","w":"レストラン","g":"word","a":["restaurant"]},{"r":"mise","k":"みせ","w":"店","g":"word","a":["shop"]},{"r":"kaimono","k":"かいもの","w":"買い物","g":"word","a":["shopping"]},{"r":"okane","k":"おかね","w":"お金","g":"word","a":["money"]},{"r":"kane","k":"かね","w":"金","g":"word","a":[]},{"r":"gin","k":"ぎん","w":"銀","g":"word","a":[]},{"r":"shiro","k":"しろ","w":"白","g":"word","a":["white"]},{"r":"kuro","k":"くろ","w":"黒","g":"word","a":["black"]},{"r":"aka","k":"あか","w":"赤","g":"word","a":["red"]},{"r":"ao","k":"あお","w":"青","g":"word","a":["blue"]},{"r":"midori","k":"みどり","w":"緑","g":"word","a":["green"]},{"r":"kiiro","k":"きいろ","w":"黄色","g":"word","a":["yellow"]},{"r":"murasaki","k":"むらさき","w":"紫","g":"word","a":["purple"]},{"r":"pink","k":"ぴんく","w":"ピンク","g":"word","a":["pinku"]},{"r":"iro","k":"いろ","w":"色","g":"word","a":["color"]},{"r":"ichi","k":"いち","w":"一","g":"number","a":["1"]},{"r":"ni","k":"に","w":"二","g":"number","a":["2"]},{"r":"san","k":"さん","w":"三","g":"number","a":["3"]},{"r":"yon","k":"よん","w":"四","g":"number","a":["4"]},{"r":"shi","k":"し","w":"四","g":"number","a":["4"]},{"r":"go","k":"ご","w":"五","g":"number","a":["5"]},{"r":"roku","k":"ろく","w":"六","g":"number","a":["6"]},{"r":"nana","k":"なな","w":"七","g":"number","a":["7"]},{"r":"shichi","k":"しち","w":"七","g":"number","a":["7"]},{"r":"hachi","k":"はち","w":"八","g":"number","a":["8"]},{"r":"kyuu","k":"きゅう","w":"九","g":"number","a":["9"]},{"r":"juu","k":"じゅう","w":"十","g":"number","a":["10"]},{"r":"hyaku","k":"ひゃく","w":"百","g":"number","a":["100"]},{"r":"sen","k":"せん","w":"千","g":"number","a":["1000"]},{"r":"man","k":"まん","w":"万","g":"number","a":["10000"]},{"r":"zero","k":"ぜろ","w":"ゼロ","g":"number","a":["0"]},{"r":"rei","k":"れい","w":"零","g":"number","a":["0"]},{"r":"ichi","k":"いち","w":"壱","g":"number","a":[]},{"r":"tokyo","k":"とうきょう","w":"東京","g":"place","a":["toukyou","toukyoo","tokio"]},{"r":"oosaka","k":"おおさか","w":"大阪","g":"place","a":["osaka"]},{"r":"kyouto","k":"きょうと","w":"京都","g":"place","a":["kyoto"]},{"r":"hokkaidou","k":"ほっかいどう","w":"北海道","g":"place","a":["hokkaido"]},{"r":"okinawa","k":"おきなわ","w":"沖縄","g":"place","a":[]},{"r":"yokohama","k":"よこはま","w":"横浜","g":"place","a":[]},{"r":"nagoya","k":"なごや","w":"名古屋","g":"place","a":[]},{"r":"fukuoka","k":"ふくおか","w":"福岡","g":"place","a":[]},{"r":"hiroshima","k":"ひろしま","w":"広島","g":"place","a":[]},{"r":"nara","k":"なら","w":"奈良","g":"place","a":[]},{"r":"kamakura","k":"かまくら","w":"鎌倉","g":"place","a":[]},{"r":"shibuya","k":"しぶや","w":"渋谷","g":"place","a":[]},{"r":"shinjuku","k":"しんじゅく","w":"新宿","g":"place","a":[]},{"r":"akihabara","k":"あきはばら","w":"秋葉原","g":"place","a":["akiba"]},{"r":"ikebukuro","k":"いけぶくろ","w":"池袋","g":"place","a":[]},{"r":"ginza","k":"ぎんざ","w":"銀座","g":"place","a":[]},{"r":"ueno","k":"うえの","w":"上野","g":"place","a":[]},{"r":"asakusa","k":"あさくさ","w":"浅草","g":"place","a":[]},{"r":"fuji","k":"ふじ","w":"富士","g":"place","a":[]},{"r":"fujisan","k":"ふじさん","w":"富士山","g":"place","a":["mount fuji"]},{"r":"kankoku","k":"かんこく","w":"韓国","g":"place","a":["korea"]},{"r":"chuugoku","k":"ちゅうごく","w":"中国","g":"place","a":["china"]},{"r":"amerika","k":"あめりか","w":"アメリカ","g":"place","a":["america","usa"]},{"r":"igirisu","k":"いぎりす","w":"イギリス","g":"place","a":["uk","england"]},{"r":"furansu","k":"ふらんす","w":"フランス","g":"place","a":["france"]},{"r":"doitsu","k":"どいつ","w":"ドイツ","g":"place","a":["germany"]},{"r":"shingapore","k":"しんがぽーる","w":"シンガポール","g":"place","a":["singapore"]},{"r":"mazinger","k":"まじんがーぜっと","w":"マジンガーZ","g":"title","a":["mazing","mazinga","mazinger z","mazingerz","majinga","majin ga z"]},{"r":"mazinger zero","k":"まじんがーぜろ","w":"マジンガーZERO","g":"title","a":["mazingerzero","mazinger zero","majinga zero"]},{"r":"mazinkaiser","k":"まじんかいざー","w":"マジンカイザー","g":"title","a":["majin kaiser","mazinkaiser"]},{"r":"naruto","k":"なると","w":"NARUTO","g":"title","a":["naruto shippuden","ナルト"]},{"r":"naruto","k":"なると","w":"ナルト","g":"character","a":["uzumaki naruto"]},{"r":"onepiece","k":"わんぴーす","w":"ONE PIECE","g":"title","a":["one piece","wanpiisu"]},{"r":"luffy","k":"るふぃ","w":"ルフィ","g":"character","a":["monkey d luffy"]},{"r":"zoro","k":"ぞろ","w":"ゾロ","g":"character","a":["roronoa zoro"]},{"r":"sanji","k":"さんじ","w":"サンジ","g":"character","a":[]},{"r":"goku","k":"ごくう","w":"悟空","g":"character","a":["son goku"]},{"r":"son goku","k":"そんごくう","w":"孫悟空","g":"character","a":["goku"]},{"r":"dragonball","k":"どらごんぼーる","w":"ドラゴンボール","g":"title","a":["dragon ball","dbz"]},{"r":"gundam","k":"がんだむ","w":"ガンダム","g":"title","a":[]},{"r":"pokemon","k":"ぽけもん","w":"ポケモン","g":"title","a":["pocket monsters"]},{"r":"pikachu","k":"ぴかちゅう","w":"ピカチュウ","g":"character","a":[]},{"r":"eevee","k":"いーぶい","w":"イーブイ","g":"character","a":["eievui"]},{"r":"kimetsu","k":"きめつのやいば","w":"鬼滅の刃","g":"title","a":["kimetsu no yaiba","demon slayer","kimetsunoyaiba"]},{"r":"tanjiro","k":"たんじろう","w":"炭治郎","g":"character","a":["tanjirou","kamado tanjiro"]},{"r":"nezuko","k":"ねずこ","w":"禰豆子","g":"character","a":["kamado nezuko"]},{"r":"zenitsu","k":"ぜんいつ","w":"善逸","g":"character","a":["agatsuma zenitsu"]},{"r":"inosuke","k":"いのすけ","w":"伊之助","g":"character","a":[]},{"r":"shingeki","k":"しんげきのきょじん","w":"進撃の巨人","g":"title","a":["shingeki no kyojin","attack on titan","aot"]},{"r":"eren","k":"えれん","w":"エレン","g":"character","a":["eren yeager"]},{"r":"mikasa","k":"みかさ","w":"ミカサ","g":"character","a":["mikasa ackerman"]},{"r":"levi","k":"りゔぁい","w":"リヴァイ","g":"character","a":["rivai","levi ackerman"]},{"r":"jujutsu","k":"じゅじゅつかいせん","w":"呪術廻戦","g":"title","a":["jujutsu kaisen","jjk","jujutsukaisen"]},{"r":"gojo","k":"ごじょうさとる","w":"五条悟","g":"character","a":["gojo satoru","gojou"]},{"r":"itadori","k":"いたどりゆうじ","w":"虎杖悠仁","g":"character","a":["itadori yuji"]},{"r":"sukuna","k":"すくな","w":"宿儺","g":"character","a":["ryomen sukuna"]},{"r":"chainsawman","k":"ちぇんそーまん","w":"チェンソーマン","g":"title","a":["chainsaw man"]},{"r":"makima","k":"まきま","w":"マキマ","g":"character","a":[]},{"r":"denji","k":"でんじ","w":"デンジ","g":"character","a":[]},{"r":"power","k":"ぱわー","w":"パワー","g":"character","a":["chainsaw man power"]},{"r":"spyfamily","k":"すぱいふぁみりー","w":"SPY×FAMILY","g":"title","a":["spy x family","spy family"]},{"r":"anya","k":"あーにゃ","w":"アーニャ","g":"character","a":["anya forger"]},{"r":"frieren","k":"ふりーれん","w":"フリーレン","g":"title","a":["sousou no frieren"]},{"r":"sousounofrieren","k":"そうそうのふりーれん","w":"葬送のフリーレン","g":"title","a":["frieren beyond journey's end"]},{"r":"himmel","k":"ひんめる","w":"ヒンメル","g":"character","a":[]},{"r":"fern","k":"ふぇるん","w":"フェルン","g":"character","a":[]},{"r":"haruhi","k":"はるひ","w":"ハルヒ","g":"character","a":["suzumiya haruhi"]},{"r":"suzumiya haruhi","k":"すずみやはるひ","w":"涼宮ハルヒ","g":"character","a":[]},{"r":"evangelion","k":"えゔぁんげりおん","w":"エヴァンゲリオン","g":"title","a":["eva","neon genesis evangelion"]},{"r":"shinji","k":"しんじ","w":"シンジ","g":"character","a":["ikari shinji"]},{"r":"rei","k":"れい","w":"レイ","g":"character","a":["ayanami rei"]},{"r":"asuka","k":"あすか","w":"アスカ","g":"character","a":["shikinami asuka"]},{"r":"sailormoon","k":"せーらーむーん","w":"セーラームーン","g":"title","a":["sailor moon"]},{"r":"madoka","k":"まどか","w":"まどか","g":"character","a":["kaname madoka"]},{"r":"madomagi","k":"まどかまぎか","w":"魔法少女まどか☆マギカ","g":"title","a":["puella magi madoka magica","mahou shoujo madoka magica"]},{"r":"k-on","k":"けいおん","w":"けいおん！","g":"title","a":["keion","kon"]},{"r":"bocchi","k":"ぼっち","w":"ぼっち","g":"word","a":[]},{"r":"bocchitherock","k":"ぼっちざろっく","w":"ぼっち・ざ・ろっく！","g":"title","a":["bocchi the rock"]},{"r":"hatsunemiku","k":"はつねみく","w":"初音ミク","g":"character","a":["hatsune miku","miku","vocaloid"]},{"r":"miku","k":"みく","w":"ミク","g":"character","a":["hatsune miku"]},{"r":"vocaloid","k":"ぼーかろいど","w":"VOCALOID","g":"title","a":["vocaloid"]},{"r":"kagamine rin","k":"かがみねりん","w":"鏡音リン","g":"character","a":["rin","kagamine"]},{"r":"kagamine len","k":"かがみねれん","w":"鏡音レン","g":"character","a":["len"]},{"r":"megurine luka","k":"めぐりねるか","w":"巡音ルカ","g":"character","a":["luka"]},{"r":"kaito","k":"かいと","w":"KAITO","g":"character","a":["vocaloid kaito"]},{"r":"gumi","k":"ぐみ","w":"GUMI","g":"character","a":["megpoid"]},{"r":"touhou","k":"とうほう","w":"東方Project","g":"title","a":["touhou project","toho"]},{"r":"reimu","k":"れいむ","w":"博麗霊夢","g":"character","a":["hakurei reimu"]},{"r":"marisa","k":"まりさ","w":"霧雨魔理沙","g":"character","a":["kirisame marisa"]},{"r":"sakuya","k":"さくや","w":"十六夜咲夜","g":"character","a":["izayoi sakuya"]},{"r":"cirno","k":"ちるの","w":"チルノ","g":"character","a":["chiruno"]},{"r":"remilia","k":"れみりあ","w":"レミリア・スカーレット","g":"character","a":["remilia scarlet"]},{"r":"flandre","k":"ふらんどーる","w":"フランドール・スカーレット","g":"character","a":["flandre scarlet"]},{"r":"fate","k":"ふぇいと","w":"Fate","g":"title","a":["fate stay night","fate series"]},{"r":"saber","k":"せいばー","w":"セイバー","g":"character","a":["artoria pendragon"]},{"r":"jojo","k":"じょじょ","w":"ジョジョの奇妙な冒険","g":"title","a":["jojo's bizarre adventure"]},{"r":"joestar","k":"じょーすたー","w":"ジョースター","g":"character","a":[]},{"r":"dio","k":"でぃお","w":"DIO","g":"character","a":["jojo"]},{"r":"berserk","k":"べるせるく","w":"ベルセルク","g":"title","a":[]},{"r":"fullmetal","k":"はがねのれんきんじゅつし","w":"鋼の錬金術師","g":"title","a":["fullmetal alchemist","hagane no renkinjutsushi"]},{"r":"haikyuu","k":"はいきゅー","w":"ハイキュー!!","g":"title","a":["haikyu"]},{"r":"blue lock","k":"ぶるーろっく","w":"ブルーロック","g":"title","a":["bluelock"]},{"r":"oshi no ko","k":"おしのこ","w":"【推しの子】","g":"title","a":["oshinoko","oshi no ko"]},{"r":"oshi","k":"おし","w":"推し","g":"word","a":[]},{"r":"kuroko","k":"くろこ","w":"黒子","g":"character","a":[]},{"r":"subaru","k":"すばる","w":"スバル","g":"character","a":["re zero subaru"]},{"r":"rezero","k":"りぜろ","w":"Re:ゼロから始める異世界生活","g":"title","a":["re zero","re:zero"]},{"r":"konosuba","k":"このすば","w":"この素晴らしい世界に祝福を！","g":"title","a":["kono subarashii sekai ni shukufuku wo"]},{"r":"megumin","k":"めぐみん","w":"めぐみん","g":"character","a":["konosuba"]},{"r":"slime","k":"すらいむ","w":"スライム","g":"word","a":[]},{"r":"tensura","k":"てんすら","w":"転生したらスライムだった件","g":"title","a":["tensei shitara slime datta ken"]},{"r":"swordartonline","k":"そーどあーとおんらいん","w":"ソードアート・オンライン","g":"title","a":["sao","sword art online"]},{"r":"kirito","k":"きりと","w":"キリト","g":"character","a":[]},{"r":"asuna","k":"あすな","w":"アスナ","g":"character","a":[]},{"r":"mononoke","k":"もののけ","w":"もののけ","g":"word","a":[]},{"r":"mononokehime","k":"もののけひめ","w":"もののけ姫","g":"title","a":["princess mononoke"]},{"r":"chihiro","k":"ちひろ","w":"千尋","g":"character","a":["spirited away"]},{"r":"sen to chihiro","k":"せんとちひろ","w":"千と千尋の神隠し","g":"title","a":["spirited away"]},{"r":"howl","k":"はうる","w":"ハウル","g":"character","a":["howl's moving castle"]},{"r":"kimino na wa","k":"きみのなは","w":"君の名は。","g":"title","a":["your name","kimi no na wa"]},{"r":"suzume","k":"すずめ","w":"すずめの戸締まり","g":"title","a":["suzume no tojimari"]},{"r":"weatheringwithyou","k":"てんきのこ","w":"天気の子","g":"title","a":["tenki no ko"]}];
+const base={
+ a:'あ',i:'い',u:'う',e:'え',o:'お',
+ ka:'か',ki:'き',ku:'く',ke:'け',ko:'こ',
+ sa:'さ',shi:'し',si:'し',su:'す',se:'せ',so:'そ',
+ ta:'た',chi:'ち',ti:'ち',tsu:'つ',tu:'つ',te:'て',to:'と',
+ na:'な',ni:'に',nu:'ぬ',ne:'ね',no:'の',
+ ha:'は',hi:'ひ',fu:'ふ',hu:'ふ',he:'へ',ho:'ほ',
+ ma:'ま',mi:'み',mu:'む',me:'め',mo:'も',
+ ya:'や',yu:'ゆ',yo:'よ',
+ ra:'ら',ri:'り',ru:'る',re:'れ',ro:'ろ',
+ wa:'わ',wi:'うぃ',we:'うぇ',wo:'を',nn:'ん',
+ ga:'が',gi:'ぎ',gu:'ぐ',ge:'げ',go:'ご',
+ za:'ざ',ji:'じ',zi:'じ',zu:'ず',ze:'ぜ',zo:'ぞ',
+ da:'だ',di:'ぢ',du:'づ',de:'で',do:'ど',
+ ba:'ば',bi:'び',bu:'ぶ',be:'べ',bo:'ぼ',
+ pa:'ぱ',pi:'ぴ',pu:'ぷ',pe:'ぺ',po:'ぽ',
+ va:'ゔぁ',vi:'ゔぃ',vu:'ゔ',ve:'ゔぇ',vo:'ゔぉ',
+ kya:'きゃ',kyu:'きゅ',kyo:'きょ',
+ sha:'しゃ',shu:'しゅ',sho:'しょ',sya:'しゃ',syu:'しゅ',syo:'しょ',
+ cha:'ちゃ',chu:'ちゅ',cho:'ちょ',tya:'ちゃ',tyu:'ちゅ',tyo:'ちょ',
+ nya:'にゃ',nyu:'にゅ',nyo:'にょ',
+ hya:'ひゃ',hyu:'ひゅ',hyo:'ひょ',
+ mya:'みゃ',myu:'みゅ',myo:'みょ',
+ rya:'りゃ',ryu:'りゅ',ryo:'りょ',
+ gya:'ぎゃ',gyu:'ぎゅ',gyo:'ぎょ',
+ ja:'じゃ',ju:'じゅ',jo:'じょ',jya:'じゃ',jyu:'じゅ',jyo:'じょ',zya:'じゃ',zyu:'じゅ',zyo:'じょ',
+ bya:'びゃ',byu:'びゅ',byo:'びょ',pya:'ぴゃ',pyu:'ぴゅ',pyo:'ぴょ',
+ dya:'ぢゃ',dyu:'ぢゅ',dyo:'ぢょ',
+ fa:'ふぁ',fi:'ふぃ',fe:'ふぇ',fo:'ふぉ',fyu:'ふゅ',
+ tsa:'つぁ',tsi:'つぃ',tse:'つぇ',tso:'つぉ',
+ she:'しぇ',che:'ちぇ',je:'じぇ',
+ tha:'てゃ',thi:'てぃ',thu:'てゅ',the:'てぇ',tho:'てょ',
+ dha:'でゃ',dhi:'でぃ',dhu:'でゅ',dhe:'でぇ',dho:'でょ',
+ twa:'とぁ',twi:'とぃ',twu:'とぅ',twe:'とぇ',two:'とぉ',
+ dwa:'どぁ',dwi:'どぃ',dwu:'どぅ',dwe:'どぇ',dwo:'どぉ',
+ xa:'ぁ',xi:'ぃ',xu:'ぅ',xe:'ぇ',xo:'ぉ',la:'ぁ',li:'ぃ',lu:'ぅ',le:'ぇ',lo:'ぉ',
+ xya:'ゃ',xyu:'ゅ',xyo:'ょ',lya:'ゃ',lyu:'ゅ',lyo:'ょ',xtsu:'っ',ltu:'っ',ltsu:'っ',xtu:'っ',
+ xwa:'ゎ',lwa:'ゎ'
+};
+function toHira(input){
+ let s=input.toLowerCase().normalize('NFKC');let out='';
+ for(let i=0;i<s.length;){
+  let c=s[i],next=s[i+1]||'';
+  if(c==='n'){
+   if(next==="'"){out+='ん';i+=2;continue;}
+   if(next==='n'&&/[aiueoy]/.test(s[i+2]||'')){out+='ん';i++;continue;}
+   if(next==='n'){out+='ん';i+=2;continue;}
+   if(!next || (next && !/[aiueoyn]/.test(next) && /[a-z]/.test(next))){out+='ん';i++;continue;}
+  }
+  if(c===next && /[bcdfghjklmpqrstvwxyz]/.test(c)&&c!=='n'){out+='っ';i++;continue;}
+  let found=false;
+  for(let len=3;len>=1;len--){let key=s.slice(i,i+len);if(base[key]){out+=base[key];i+=len;found=true;break;}}
+  if(found)continue;
+  out+=c;i++;
+ }
+ return out;
+}
+function toKata(input){return [...input].map(c=>{let n=c.codePointAt(0);return n>=0x3041&&n<=0x3096?String.fromCodePoint(n+0x60):c;}).join('');}
+const normalize=s=>String(s||'').toLowerCase().normalize('NFKC').replace(/[\s_\-・.×]/g,'');
+function editDistance(a,b){if(Math.abs(a.length-b.length)>2)return 99;let p=Array.from({length:b.length+1},(_,i)=>i);for(let i=1;i<=a.length;i++){let n=[i];for(let j=1;j<=b.length;j++)n[j]=Math.min(n[j-1]+1,p[j]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=n;}return p[b.length];}
+
+
+const originalIndex = DICT.map((d) => ({
+  ...d,
+  keys: [d.r, ...(d.a || []), d.k, d.w].map(normalize).filter(Boolean)
+}));
+
+function matchScore(keys, q) {
+  if (!q) return -1;
+  let best = -1;
+  for (const key of keys) {
+    if (!key) continue;
+    if (key === q) best = Math.max(best, 1200);
+    else if (key.startsWith(q)) best = Math.max(best, 940 - Math.min(key.length-q.length,80));
+    else if (q.length >= 3 && key.includes(q)) best = Math.max(best, 740-Math.min(key.length-q.length,80));
+    else if (q.length >= 4 && key.length >= 4 && Math.abs(key.length - q.length) <= 2) {
+      const distance = editDistance(q,key);
+      if (distance <= Math.min(2, Math.floor(q.length / 4))) best=Math.max(best,560-distance*95);
+    }
+  }
+  return best;
+}
+
+function toSafeKana(input) {
+  // Keep completed syllables and strip an unfinished Latin tail for prediction.
+  return toHira(String(input || '').trim()).replace(/[a-z]+$/ig, '').trim();
+}
+
+function validateCustomEntry(entry) {
+  if (!entry || typeof entry !== 'object') return null;
+  const word=String(entry.word || '').trim().slice(0,80);
+  const reading=String(entry.reading || '').trim().slice(0,80);
+  const aliases=Array.isArray(entry.aliases)
+    ? entry.aliases.map(a=>String(a).trim().slice(0,80)).filter(Boolean).slice(0,12)
+    : [];
+  if (!word || !aliases.length || word.length>80 || /[\u0000-\u001f]/.test(word)) return null;
+  return {word, reading, aliases};
+}
+
+function bestWord(raw, entries) {
+  const q=normalize(raw), kana=toHira(raw);
+  let matched=null, best=-1;
+  for (const d of entries) {
+    const score=matchScore(d.keys,q);
+    if (score>best && score>=1200) { best=score;matched=d; }
+  }
+  return matched ? matched.w : kana;
+}
+
+function localCandidates(query, custom=[]) {
+  const q=String(query || '').trim().slice(0,160);
+  if(!q) return [];
+  const key=normalize(q), hira=toHira(q.toLowerCase()), kata=toKata(hira);
+  const customEntries=custom.map(validateCustomEntry).filter(Boolean).map(d=>({
+    w:d.word, k:d.reading, g:'custom', r:d.aliases[0], a:d.aliases.slice(1),
+    keys:[...d.aliases,d.reading,d.word].map(normalize).filter(Boolean)
+  }));
+  const index=[...customEntries,...originalIndex];
+  const out=[];
+  const add=(word,reading,kind,detail,score,source='local')=>{
+    if(word) out.push({word,reading:reading||'',kind,detail,score,source});
+  };
+  if (/\s/.test(q) && q.split(/\s+/).length>1) {
+    const parts=q.split(/\s+/).filter(Boolean);
+    const word=parts.map(p=>bestWord(p,index)).join('');
+    const reading=parts.map(toHira).join('');
+    add(word,reading,'sentence','로컬 문장 조합',970);
+    if (!/[a-z]/i.test(reading)) add(reading,reading,'kana','히라가나 문장',680);
+  }
+  for (const d of index) {
+    let score=matchScore(d.keys,key);
+    if (hira===d.k && hira && !/[a-z]/i.test(hira)) score=Math.max(score,1190);
+    if(score<0) continue;
+    const kind=d.g==='custom'?'custom':d.g==='title'?'title':d.g==='character'?'character':'word';
+    const detail=d.g==='title'?'작품명':d.g==='character'?'캐릭터':d.g==='custom'?'내 단어 사전':'내장 사전';
+    add(d.w,d.k,kind,detail,score+(d.g==='custom'?450:0),d.g==='custom'?'custom':'local');
+  }
+  if(hira && !/[a-z]/i.test(hira)) {
+    add(hira,hira,'kana','히라가나',655);
+    add(kata,hira,'kana','가타카나',645);
+  }
+  return mergeCandidates(out).slice(0,65);
+}
+
+function mergeCandidates(items, frequency=new Map()) {
+  const unique=new Map();
+  for(const item of items) {
+    if (!item || !item.word || typeof item.word !== 'string') continue;
+    const score=(Number(item.score)||0)+Math.min(frequency.get(item.word)||0,10)*10;
+    const existing=unique.get(item.word);
+    if(!existing || score>existing.score) unique.set(item.word,{...item,score});
+  }
+  return [...unique.values()].sort((a,b)=>b.score-a.score || a.word.length-b.word.length || a.word.localeCompare(b.word,'ja'));
+}
+
+function mapRemote(remote, query) {
+  if(!remote || !Array.isArray(remote.items)) return [];
+  const key=normalize(query);
+  return remote.items.filter(i=>i && typeof i.word==='string' && i.word.length<=160).map(i=>{
+    const base=i.source==='anilist'?1260:1200;
+    const spellings=[i.romaji,i.english,i.word].filter(Boolean).map(normalize);
+    const match=matchScore(spellings,key);
+    return {word:i.word,reading:i.reading||'',kind:i.kind||'word',source:i.source||'remote',
+      detail:i.detail||'',score:base+(match>=1200?190:match>=900?80:0)+(Number(i.order)||0)*-4};
+  });
+}
+
+/**
+ * SKK dictionary provider. No API keys, credentials, tracking, or servers.
+ * First use downloads SKK-JISYO.L (EUC-JP) through a CORS-enabled public mirror.
+ * Subsequent use reads the data from IndexedDB, where supported.
+ * Source dictionary: https://github.com/skk-dev/dict (GPL-2.0-or-later header).
+ * No SKK dictionary is distributed in the HTML artifact itself.
+ */
+const SKK_URLS = [
+  'https://cdn.jsdelivr.net/gh/skk-dev/dict@master/SKK-JISYO.L',
+  'https://raw.githubusercontent.com/skk-dev/dict/master/SKK-JISYO.L'
+];
+const DB_NAME='japanese-input-1.0-dictionaries';
+const STORE='dictionary';
+const KEY='skk-jisyo-l-v1';
+let index=null, loadPromise=null;
+const skkStatus=()=>index ? {state:'ready',words:index.size} : {state:'not-loaded',words:0};
+
+function parseSKK(text){
+  const map=new Map();
+  let entries=0;
+  for(const line of String(text).split(/\r?\n/)){
+    if (!line || line.startsWith(';')) continue;
+    const pos=line.indexOf(' ');
+    if(pos<=0 || line[pos+1]!=='/')continue;
+    const reading=line.slice(0,pos).trim();
+    // SKK okuri-ari keys end with a latin suffix and cannot be used as plain readings.
+    if (!/^[\u3040-\u309fー]+$/.test(reading))continue;
+    const words=[];
+    for(const raw of line.slice(pos+2).split('/')){
+      if(!raw)continue;
+      const word=raw.split(';')[0].trim();
+      if(!word || word.length>64 || /[\\()\x00-\x1f]/.test(word) || /^[\x20-\x7e]+$/.test(word))continue;
+      if(!words.includes(word)){words.push(word);entries++;}
+      if(words.length>=30)break;
+    }
+    if(words.length){
+      if(map.has(reading))map.set(reading,[...new Set([...map.get(reading),...words])].slice(0,30));
+      else map.set(reading,words);
+    }
+  }
+  return {map,entries};
+}
+
+function openDB(){
+  return new Promise((resolve,reject)=>{
+    if(!globalThis.indexedDB)return reject(new Error('IndexedDB unavailable'));
+    const req=indexedDB.open(DB_NAME,1);
+    req.onupgradeneeded=()=>req.result.createObjectStore(STORE);
+    req.onsuccess=()=>resolve(req.result);
+    req.onerror=()=>reject(req.error);
+  });
+}
+async function readCached(){
+  const db=await openDB();
+  try{return await new Promise((resolve,reject)=>{
+    const tx=db.transaction(STORE,'readonly');const req=tx.objectStore(STORE).get(KEY);
+    req.onsuccess=()=>resolve(req.result||null);req.onerror=()=>reject(req.error);
+  });}finally{db.close();}
+}
+async function saveCached(value){
+  const db=await openDB();
+  try{return await new Promise((resolve,reject)=>{
+    const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).put(value,KEY);
+    tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);
+  });}finally{db.close();}
+}
+function decodeSKK(buffer){
+  // The upstream SKK-JISYO.L is EUC-JP; TextDecoder supports this in modern browsers.
+  return new TextDecoder('euc-jp',{fatal:false}).decode(buffer);
+}
+async function fetchDictionary(fetchFn,urls,timeout){
+  let lastError;
+  for(const url of urls){
+    const controller=new AbortController();
+    const timer=setTimeout(()=>controller.abort(),timeout);
+    try{
+      const res=await fetchFn(url,{method:'GET',mode:'cors',signal:controller.signal,cache:'default',credentials:'omit'});
+      if(!res.ok)throw new Error('SKK HTTP '+res.status);
+      const raw=await res.arrayBuffer();
+      // Small/empty error pages should not silently replace the actual dictionary.
+      if(raw.byteLength<10000)throw new Error('SKK 응답이 너무 작습니다.');
+      const parsed=parseSKK(decodeSKK(raw));
+      if(parsed.map.size<2000)throw new Error('SKK 사전 형식이 잘못되었습니다.');
+      return {parsed,raw};
+    }catch(e){lastError=e;}
+    finally{clearTimeout(timer);}
+  }
+  throw lastError||new Error('SKK 사전 다운로드 실패');
+}
+async function loadSKK({fetchFn=fetch,urls=SKK_URLS,timeout=9500,onStatus=()=>{}}={}){
+  if(index)return index;
+  if(loadPromise)return loadPromise;
+  loadPromise=(async()=>{
+    try{
+      onStatus('cache');
+      try{
+        const raw=await readCached();
+        if(raw){const parsed=parseSKK(decodeSKK(raw));if(parsed.map.size>2000){index=makeIndex(parsed);onStatus('ready',index.size);return index;}}
+      }catch{/* Private browsing or file:// storage can disallow IndexedDB. */}
+      onStatus('loading');
+      const {parsed,raw}=await fetchDictionary(fetchFn,urls,timeout);
+      index=makeIndex(parsed);
+      try{await saveCached(raw);}catch{/* Dictionary stays available in this tab. */}
+      onStatus('ready',index.size);return index;
+    }catch(error){onStatus('error',error);throw error;}
+  })();
+  try{return await loadPromise;}finally{loadPromise=null;}
+}
+function makeIndex(parsed){
+  const map=parsed.map;
+  return {map,keys:[...map.keys()].sort(),size:map.size,entries:parsed.entries};
+}
+function lowerBound(sorted,q){let l=0,r=sorted.length;while(l<r){const m=(l+r)>>1;if(sorted[m]<q)l=m+1;else r=m;}return l;}
+function findSKK(reading,{limit=48,source=index}={}){
+  if(!source || !reading || !/^[\u3040-\u309fー]+$/.test(reading))return [];
+  const out=[], exact=source.map.get(reading);
+  if(exact){for(let i=0;i<Math.min(20,exact.length);i++)out.push({word:exact[i],reading,kind:'word',detail:'SKK 사전',source:'skk',score:1160-i*3});}
+  if(reading.length>=2){
+    let seen=0;
+    const start=lowerBound(source.keys,reading);
+    for(let j=start;j<source.keys.length && source.keys[j].startsWith(reading) && out.length<limit && seen<90;j++,seen++){
+      const k=source.keys[j];if(k===reading)continue;
+      // Prefer shorter completions to long and unrelated prefixes.
+      const score=840-Math.min(k.length-reading.length,18)*18;
+      for(const word of source.map.get(k).slice(0,2)){
+        if(out.length>=limit)break;
+        out.push({word,reading:k,kind:'prediction',detail:'SKK 예측',source:'skk',score});
+      }
+    }
+  }
+  return out.slice(0,limit);
+}
+function findSKKSentence(tokens,{source=index}={}){
+  if(!source || !Array.isArray(tokens) || tokens.length<2)return null;
+  const words=tokens.map(k=>{
+    const cand=source.map.get(k);
+    return cand?.[0]||k;
+  });
+  return {word:words.join(''),reading:tokens.join(''),kind:'sentence',detail:'SKK 단어별 조합',source:'skk',score:985};
+}
+// Tests may explicitly reset the in-memory index, without changing persistent data.
+function useSKKIndexForTests(parsed){index=parsed?makeIndex(parsed):null;loadPromise=null;}
+
+/** Unauthenticated public AniList title lookup. Only explicit search terms are sent. */
+const ANILIST_URL='https://graphql.anilist.co';
+const ANILIST_QUERY=`query ($term: String!) {
+  Page(page: 1, perPage: 12) {
+    media(search: $term) { id type title { native romaji english } }
+  }
+}`;
+function parseAniList(payload){
+  const items=payload?.data?.Page?.media;
+  if(!Array.isArray(items))throw new Error('AniList 응답 형식 오류');
+  const out=[];
+  for(const [i,m] of items.entries()){
+    if(!m || !m.title)continue;
+    const word=String(m.title.native||'').trim();
+    // Do not present a Latin title as if it were a Japanese rendering.
+    if(!/[\u3040-\u30ff\u3400-\u9fff]/.test(word))continue;
+    const romaji=String(m.title.romaji||'').trim(),english=String(m.title.english||'').trim();
+    out.push({word,reading:romaji,english,romaji,kind:'title',source:'anilist',
+      detail:m.type==='MANGA'?'만화 작품명':'애니메이션 작품명',order:i});
+  }
+  return out;
+}
+async function fetchAniList(term,{fetchFn=fetch,signal}={}){
+  const q=String(term||'').trim().slice(0,90);
+  if(q.length<3)return [];
+  const res=await fetchFn(ANILIST_URL,{method:'POST',mode:'cors',credentials:'omit',
+    headers:{'Content-Type':'application/json','Accept':'application/json'},
+    body:JSON.stringify({query:ANILIST_QUERY,variables:{term:q}}),signal,cache:'no-store'});
+  if(res.status===429)throw new Error('RATE_LIMIT');
+  if(!res.ok)throw new Error('HTTP '+res.status);
+  const payload=await res.json();
+  if(payload.errors?.length)throw new Error(payload.errors[0]?.message||'AniList API 오류');
+  return parseAniList(payload);
+}
+
+const $=(selector)=>document.querySelector(selector);
+const queryEl=$('#query'), resultsEl=$('#results'), statusEl=$('#onlineStatus'), countEl=$('#resultCount');
+const outputEl=$('#output'), dialog=$('#dictionaryDialog'), form=$('#dictionaryForm');
+const STORAGE_KEY='japanese-input-2-custom-v1';
+const THEME_KEY='japanese-input-2-theme';
+const frequency=new Map(), onlineCache=new Map(), undoStack=[];
+let customEntries=loadCustom(), visible=[], chosen=0, mediaPayload=null, pending=null, debounceId=0, requestId=0, toastTimeout=0;
+let dictionaryState='loading', mediaState='', lastAniListRequest=0, cooldownUntil=0;
+let selection={start:0,end:0}, restoring=false;
+
+function loadCustom(){
+  try {
+    const parsed=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');
+    return Array.isArray(parsed)?parsed.slice(0,350).map(x=>({id:String(x.id||''),...validateCustomEntry(x)})).filter(x=>x.word&&x.aliases?.length):[];
+  } catch {return [];}
+}
+function storeCustom(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(customEntries));return true;}catch{return false;}}
+function setStatus(text,state=''){
+  statusEl.className='status'+(state?' '+state:'');
+  statusEl.replaceChildren();
+  const dot=document.createElement('span');dot.className='status-dot';
+  statusEl.append(dot,document.createTextNode(text));
+}
+function message(text){
+  const el=$('#toast');el.textContent=text;el.classList.add('visible');
+  clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>el.classList.remove('visible'),1600);
+}
+function annotateKind(item){
+  if(item.source==='custom') return '내 사전';
+  if(item.source==='anilist')return item.detail||'온라인 작품명';
+  if(item.source==='skk')return item.detail||'SKK 사전';
+  return item.detail||'로컬 변환';
+}
+function render(){
+  const q=queryEl.value.trim();
+  const kana=toSafeKana(q);
+  const skk=findSKK(kana,{limit:42});
+  const tokens=q.split(/\s+/).filter(Boolean).map(toSafeKana);
+  const sentence=(tokens.length>1 && tokens.every(Boolean))?findSKKSentence(tokens):null;
+  const list=q?mergeCandidates([...localCandidates(q,customEntries),...skk,...(sentence?[sentence]:[]),...mapRemote({items:mediaPayload||[]},q)],frequency):[];
+  visible=list.slice(0,9);chosen=Math.max(0,Math.min(chosen,visible.length-1));
+  countEl.textContent=q?(visible.length?`${visible.length}개 후보`:'결과 없음'):'검색어를 입력하세요';
+  resultsEl.replaceChildren();
+  if(!visible.length){
+    const empty=document.createElement('div');empty.className='empty-state';
+    const symbol=document.createElement('div');symbol.className='empty-symbol';symbol.textContent='あ';
+    const copy=document.createElement('div');copy.textContent=q?'변환 후보를 찾지 못했습니다.\n표기를 더 입력하거나 내 사전에 등록해 주세요.':'영어로 일본어 발음을 입력하세요.\n한자·가나·작품명 후보를 보여드립니다.';
+    empty.append(symbol,copy);resultsEl.append(empty);return;
+  }
+  for(const [i,item] of visible.entries()){
+    const row=document.createElement('div');row.className='result-row'+(i===chosen?' active':'');row.id='candidate-'+i;row.setAttribute('role','option');row.setAttribute('aria-selected',String(i===chosen));
+    const btn=document.createElement('button');btn.type='button';btn.className='result-copy';btn.setAttribute('aria-label',`${item.word} 복사`);
+    btn.addEventListener('click',()=>selectItem(i,'copy'));
+    const num=document.createElement('span');num.className='result-num';num.textContent=String(i+1);
+    const main=document.createElement('span');main.className='result-main';
+    const word=document.createElement('span');word.className='result-word';word.textContent=item.word;word.lang='ja';
+    const detail=document.createElement('div');detail.className='result-detail';detail.textContent=annotateKind(item)+(item.reading&&item.reading!==item.word?` · ${item.reading}`:'');
+    main.append(word,detail);btn.append(num,main);
+    const insert=document.createElement('button');insert.type='button';insert.className='insert-btn';insert.textContent='＋';insert.title='문장에 삽입';insert.setAttribute('aria-label',`${item.word} 문장에 삽입`);
+    insert.addEventListener('click',()=>selectItem(i,'insert'));
+    row.append(btn,insert);resultsEl.append(row);
+  }
+  resultsEl.setAttribute('aria-activedescendant','candidate-'+chosen);
+}
+function updateActive(){
+  [...resultsEl.querySelectorAll('.result-row')].forEach((row,i)=>{row.classList.toggle('active',i===chosen);row.setAttribute('aria-selected',String(i===chosen));});
+  resultsEl.setAttribute('aria-activedescendant','candidate-'+chosen);
+  resultsEl.querySelector('.active')?.scrollIntoView({block:'nearest'});
+}
+function snapshot(){
+  if(restoring)return;
+  const last=undoStack.at(-1);
+  const s={text:outputEl.value,start:outputEl.selectionStart,end:outputEl.selectionEnd};
+  if(!last||last.text!==s.text||last.start!==s.start||last.end!==s.end){
+    undoStack.push(s);if(undoStack.length>100)undoStack.shift();
+  }
+}
+function undo(){
+  const prev=undoStack.pop();if(!prev){message('되돌릴 내용이 없습니다.');return;}
+  restoring=true;outputEl.value=prev.text;outputEl.focus();outputEl.setSelectionRange(prev.start,prev.end);
+  selection={start:prev.start,end:prev.end};restoring=false;message('이전 상태로 되돌렸습니다.');
+}
+function insertAtCursor(word){
+  // Search-field focus must never reset the last selection in the composer.
+  const start=Math.min(selection.start,outputEl.value.length),end=Math.min(selection.end,outputEl.value.length);
+  outputEl.setSelectionRange(start,end);
+  snapshot();outputEl.setRangeText(word,start,end,'end');
+  selection={start:outputEl.selectionStart,end:outputEl.selectionEnd};
+  outputEl.dispatchEvent(new Event('input',{bubbles:true}));
+  message('문장에 삽입했습니다.');
+}
+async function copyText(value){
+  if(!value){message('복사할 문장이 없습니다.');return;}
+  try {
+    if(!navigator.clipboard?.writeText) throw new Error('clipboard unavailable');
+    await navigator.clipboard.writeText(value);message('복사했습니다.');
+  } catch {
+    const temp=document.createElement('textarea');temp.value=value;temp.style.position='fixed';temp.style.left='-9999px';document.body.append(temp);temp.select();
+    let ok=false;try{ok=document.execCommand('copy');}catch{}
+    temp.remove();message(ok?'복사했습니다.':'복사할 수 없습니다. HTTPS 환경을 확인해 주세요.');
+  }
+}
+function selectItem(index,action){
+  const item=visible[index];if(!item)return;
+  frequency.set(item.word,(frequency.get(item.word)||0)+1);
+  if(action==='insert') insertAtCursor(item.word);
+  else copyText(item.word);
+  render();
+}
+function cancelPending(){
+  clearTimeout(debounceId);
+  pending?.abort();pending=null;
+  requestId++;
+}
+function updateStatus(){
+  if(dictionaryState==='loading')setStatus('SKK 대형 사전 불러오는 중…','searching');
+  else if(dictionaryState==='error')setStatus('SKK 다운로드 실패 · 기존 내장 사전 사용','warning');
+  else if(mediaState==='loading')setStatus('SKK 준비됨 · 작품명 검색 중…','searching');
+  else if(mediaState==='error')setStatus('SKK 준비됨 · 작품명 연결 실패','warning');
+  else if(mediaState==='rate')setStatus('SKK 준비됨 · AniList 요청 제한','warning');
+  else if(mediaState==='ready')setStatus('SKK 준비됨 · 작품명 검색 완료','');
+  else if(dictionaryState==='ready')setStatus('SKK 대형 사전 준비됨','');
+  else setStatus('로컬 후보 사용 중','');
+}
+function changeQuery(){
+  cancelPending();mediaPayload=null;chosen=0;mediaState='';render();
+  const input=queryEl.value.trim();
+  if(!input){updateStatus();return;}
+  // The kana/kanji results are always local; only title searches contact AniList.
+  if(input.length<3 || input.length>48 || input.split(/\s+/).length>3 || Date.now()<cooldownUntil){updateStatus();return;}
+  const cacheKey=input.toLowerCase().normalize('NFKC');
+  const cached=onlineCache.get(cacheKey);
+  if(cached && Date.now()-cached.at<600000){mediaPayload=cached.items;mediaState='ready';render();updateStatus();return;}
+  const id=requestId;
+  mediaState='loading';updateStatus();
+  // Debounce and additionally pace requests to stay below AniList's reduced quota.
+  const delay=Math.max(600,2250-(Date.now()-lastAniListRequest));
+  debounceId=setTimeout(async()=>{
+    if(id!==requestId)return;
+    const controller=new AbortController();pending=controller;
+    lastAniListRequest=Date.now();
+    try{
+      const items=await fetchAniList(input,{signal:controller.signal});
+      if(id!==requestId)return;
+      mediaPayload=items;mediaState='ready';
+      onlineCache.set(cacheKey,{at:Date.now(),items});
+      if(onlineCache.size>60)onlineCache.delete(onlineCache.keys().next().value);
+      render();updateStatus();
+    }catch(error){
+      if(id!==requestId||error.name==='AbortError')return;
+      mediaState=error.message==='RATE_LIMIT'?'rate':'error';
+      if(mediaState==='rate')cooldownUntil=Date.now()+60000;
+      updateStatus();
+    }finally{if(id===requestId)pending=null;}
+  },delay);
+}
+async function initializeSKK(){
+  dictionaryState='loading';updateStatus();
+  try{
+    await loadSKK({onStatus:(state)=>{if(state==='loading'||state==='cache'){
+      dictionaryState='loading';updateStatus();
+    }}});
+    dictionaryState='ready';render();updateStatus();
+  }catch{
+    dictionaryState='error';render();updateStatus();
+  }
+}
+queryEl.addEventListener('input',changeQuery);
+queryEl.addEventListener('keydown',(e)=>{
+  if(e.isComposing)return;
+  if(e.key==='ArrowDown'&&visible.length){e.preventDefault();chosen=Math.min(visible.length-1,chosen+1);updateActive();}
+  else if(e.key==='ArrowUp'&&visible.length){e.preventDefault();chosen=Math.max(0,chosen-1);updateActive();}
+  else if(e.key==='Enter'&&visible.length){e.preventDefault();selectItem(chosen,e.shiftKey?'insert':'copy');}
+  else if(/^[1-9]$/.test(e.key)&&visible.length>=Number(e.key)&&!e.ctrlKey&&!e.metaKey&&!e.altKey){e.preventDefault();selectItem(Number(e.key)-1,'copy');}
+  else if(e.key==='Escape'){e.preventDefault();queryEl.value='';changeQuery();}
+});
+$('#clearQuery').addEventListener('click',()=>{queryEl.value='';changeQuery();queryEl.focus();});
+$('#copyAll').addEventListener('click',()=>copyText(outputEl.value));
+$('#reset').addEventListener('click',()=>{snapshot();outputEl.value='';selection={start:0,end:0};message('문장을 지웠습니다.');});
+$('#undo').addEventListener('click',undo);
+outputEl.addEventListener('beforeinput',(e)=>{if(e.inputType!=='historyUndo')snapshot();});
+outputEl.addEventListener('input',()=>{selection={start:outputEl.selectionStart,end:outputEl.selectionEnd};});
+for(const ev of ['click','keyup','select','focus'])outputEl.addEventListener(ev,()=>{selection={start:outputEl.selectionStart,end:outputEl.selectionEnd};});
+outputEl.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='z'&&!e.shiftKey){e.preventDefault();undo();}});
+
+function refreshDictionary(){
+  $('#customCount').textContent=String(customEntries.length);
+  $('#dictionaryListCount').textContent=customEntries.length+'개';
+  const list=$('#dictionaryList');list.replaceChildren();
+  if(!customEntries.length){const p=document.createElement('div');p.className='dictionary-empty';p.textContent='아직 등록한 단어가 없습니다.';list.append(p);return;}
+  for(const e of customEntries){
+    const row=document.createElement('div');row.className='dictionary-entry';
+    const description=document.createElement('div');const strong=document.createElement('strong');strong.textContent=e.word;strong.lang='ja';
+    const small=document.createElement('small');small.textContent=e.aliases.join(', ');description.append(strong,small);
+    const controls=document.createElement('div');controls.className='entry-controls';
+    const edit=document.createElement('button');edit.type='button';edit.textContent='수정';edit.addEventListener('click',()=>{
+      $('#editId').value=e.id;$('#entryWord').value=e.word;$('#entryReading').value=e.reading;
+      $('#entryAliases').value=e.aliases.join(', ');$('#entryWord').focus();
+    });
+    const remove=document.createElement('button');remove.type='button';remove.textContent='삭제';remove.addEventListener('click',()=>{
+      customEntries=customEntries.filter(x=>x.id!==e.id);storeCustom();refreshDictionary();render();message('단어를 삭제했습니다.');
+    });
+    controls.append(edit,remove);row.append(description,controls);list.append(row);
+  }
+}
+function clearForm(){form.reset();$('#editId').value='';$('#saveEntry').textContent='단어 저장';}
+$('#dictionaryOpen').addEventListener('click',()=>{refreshDictionary();dialog.showModal();});
+$('#dictionaryClose').addEventListener('click',()=>dialog.close());
+$('#cancelEdit').addEventListener('click',clearForm);
+dialog.addEventListener('click',(e)=>{if(e.target===dialog)dialog.close();});
+form.addEventListener('submit',e=>{
+  e.preventDefault();
+  const item=validateCustomEntry({word:$('#entryWord').value,reading:$('#entryReading').value,
+    aliases:$('#entryAliases').value.split(',')});
+  if(!item){message('일본어 표기와 별칭을 입력해 주세요.');return;}
+  const editing=$('#editId').value;
+  if(editing){customEntries=customEntries.map(x=>x.id===editing?{...item,id:x.id}:x);}
+  else {if(customEntries.length>=350){message('내 사전은 최대 350개입니다.');return;}
+    customEntries.push({id:crypto.randomUUID?.()||String(Date.now())+Math.random(),...item});}
+  if(!storeCustom())message('브라우저 저장이 차단되어 현재 탭에서만 유지됩니다.');
+  else message(editing?'단어를 수정했습니다.':'단어를 등록했습니다.');
+  clearForm();refreshDictionary();render();
+});
+function initializeTheme(){
+  let stored=null;try{stored=localStorage.getItem(THEME_KEY);}catch{}
+  if(stored==='dark'||stored==='light')document.documentElement.dataset.theme=stored;
+  else document.documentElement.dataset.theme=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+}
+$('#themeToggle').addEventListener('click',()=>{
+  const next=document.documentElement.dataset.theme==='dark'?'light':'dark';
+  document.documentElement.dataset.theme=next;try{localStorage.setItem(THEME_KEY,next);}catch{}
+});
+initializeTheme();refreshDictionary();changeQuery();initializeSKK();
+
+</script>
+</body>
+</html>
